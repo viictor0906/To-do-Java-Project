@@ -15,9 +15,9 @@ public class CorsFilter{
             @Override
             public void addCorsMappings(CorsRegistry registry){
                 registry.addMapping("/**")
-                    .allowedOrigins("https://hoppscotch.io")
-                    .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
-                    .allowedHeaders("*");
+                .allowedOrigins("https://hoppscotch.io")
+                .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
+                .allowedHeaders("*");
             }
         };
     }

@@ -1,6 +1,7 @@
 package com.ifsc.todo.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,6 +9,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 
 //Notation is a method to define what this class does.
 @Entity
@@ -23,6 +27,14 @@ public class Task {
 
     private LocalDate creationDate=LocalDate.now();
     private LocalDate limitDate;
+
+    @ManyToMany
+    @JoinTable(
+        name = "categoryTask",
+        joinColumns = @JoinColumn(name = "taskID"),
+        inverseJoinColumns = @JoinColumn(name = "categoryID")
+    )
+    private List<Category> categories;
 
     // /-Calling a object of other class file(status and priorities).
     @Enumerated(EnumType.STRING) //
@@ -86,6 +98,13 @@ public class Task {
     }
     public void setPriority(Priorities priority) {
         this.priority=priority;
+    }
+    //
+    public List<Category> getCategories() {
+        return categories;
+    }
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
     //-- Getters and Setters. --   
 }

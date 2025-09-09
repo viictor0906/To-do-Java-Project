@@ -1,6 +1,7 @@
 package com.ifsc.todo.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,6 +9,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 //Notation is a method to define what this class does.
 @Entity
@@ -17,19 +24,36 @@ public class Task {
     @GeneratedValue(strategy=GenerationType.IDENTITY) //Create new ids automatically.
     private Long id;
 
+    @NotBlank(message="Title field is obrigatory")
+    
+    @Size(min=3, max=100, message = "Between 3 e 100")
     private String title;
+    
+    
+    @Size(max = 500, message = "Desc max 500")
     private String desc;
+
+    @NotBlank(message = "Responsible is necessary")
+    @Size(min = 3, max = 100, message = "Between 3 e 100")
     private String responsible;
 
     private LocalDate creationDate=LocalDate.now();
+
+    @FutureOrPresent(message = "In future or present")
     private LocalDate limitDate;
 
-    // /-Calling a object of other class file(status and priorities).
-    @Enumerated(EnumType.STRING) //
+    @ManyToMany
+    @JoinTable(
+        name = "categoryTask",
+        joinColumns = @JoinColumn(name = "taskID"),
+        inverseJoinColumns = @JoinColumn(name = "categoryID")
+    )
+    private List<Category> categories;
+
+    @Enumerated(EnumType.STRING)
     private Status status;
     @Enumerated(EnumType.STRING)
     private Priorities priority;
-    // -\
 
     //-- Getters and Setters. --
     public Long getId() {
@@ -86,6 +110,13 @@ public class Task {
     }
     public void setPriority(Priorities priority) {
         this.priority=priority;
+    }
+    //
+    public List<Category> getCategories() {
+        return categories;
+    }
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
     //-- Getters and Setters. --   
 }

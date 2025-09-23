@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.catalina.User;
+import com.ifsc.todo.model.User;
 
 import com.ifsc.todo.repository.UserRepository;
 
@@ -56,7 +56,7 @@ public class AuthRepository {
         User u = new User();
         u.setUsername(username);
         u.setPassword(password);
-        u.setRole("USER");
+        u.setRoles("USER");
 
         userRepository.save(u);
         return true;
@@ -64,7 +64,7 @@ public class AuthRepository {
 
     public String getRoleByUsername(String username){
         return userRepository.findByUsername(username)
-            .map(User::getRole)
+            .map(User::getRoles)
             .orElse(null);
     }
 

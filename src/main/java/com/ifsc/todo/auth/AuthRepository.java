@@ -1,72 +1,83 @@
 package com.ifsc.todo.auth;
 
-import java.lang.foreign.Linker.Option;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.ifsc.todo.model.User;
+import com.ifsc.todo.entities.user.UserEntity;
+import com.ifsc.todo.repositories.UserRepository;
 
-import com.ifsc.todo.repository.UserRepository;
-
-public class AuthRepository {
+public class AuthRepository 
+{
     private final Map<String, SessionInfo> tokenStore = new ConcurrentHashMap<>();
-
-    private final JwtUtil jwtUtil;
+    private final LoginUtil loginUtil;
     private final UserRepository userRepository;
 
-    public AuthRepository(JwtUtil jwtUtil, UserRepository userRepository){
-        this.jwtUtil = jwtUtil;
+    public AuthRepository(LoginUtil loginUtil, UserRepository userRepository)
+    {
+        this.loginUtil = loginUtil;
         this.userRepository = userRepository;
     }
     
-    public Optional<String> login(String username, String password){
-        return userRepository.findByUsername(username)
-            .filter(u -> u.getPassword().equals(password))
-            .map(u->{
-                String jwt = jwtUtil.generateToken(u.getUsername(), u.getRoles());
-                tokenStore.put(jwt, new SessionInfo(u.getUsername(), Instant.now()));
-                return jwt;
+    public Optional<String> userLogin(String username, String password)
+    {
+        return userRepository
+            .findByUsername(username)
+            .filter(userFilter -> userFilter.getPassword()
+            .equals(password))
+            .map(userFilter ->
+            {
+                String loginJwt = loginUtil.generateToken(userFilter.getUsername(), userFilter.getUserRole());
+                tokenStore.put(loginJwt, new SessionInfo(userFilter.getUsername(), Instant.now()));
+                return loginJwt;
             });
     }
 
-    public Optional<String> validate(String token){
-        if(token == null || token.isBlank()) return Optional.empty();
-        try{
-            SessionInfo sessionInfo = tokenStore.get(token);
+    public Optional<String> userValidate(String loginToken)
+    {
+        if(loginToken == null || loginToken.isBlank()) return Optional.empty();
+        try
+        {
+            SessionInfo sessionInfo = tokenStore.get(loginToken);
             if(sessionInfo == null) return Optional.empty();
-            return Optional.ofNullable(jwtUtil.getSubject(token));
-        }catch(Exception e){
+            return Optional.ofNullable(loginUtil.getSubject(loginToken));
+        }
+        catch(Exception error)
+        {
             return Optional.empty();
         }
     }
 
-    public void logout(String token){
-        if(token != null){
-            tokenStore.remove(token);
+    public void userLogout(String loginToken)
+    {
+        if(loginToken != null)
+        {
+            tokenStore.remove(loginToken);
         }
     }
 
-    public boolean register(String username, String password){
+    public boolean userRegister(String username, String password)
+    {
         if(username == null || password == null) return false;
 
         if(userRepository.existsByUserName(username)) return false;
 
-        User u = new User();
-        u.setUsername(username);
-        u.setPassword(password);
-        u.setRoles("USER");
+        UserEntity newUser = new UserEntity();
+        newUser.setUsername(username);
+        newUser.setPassword(password);
+        newUser.setUserRole("USER");
 
-        userRepository.save(u);
+        userRepository.save(newUser);
         return true;
     }
 
-    public String getRoleByUsername(String username){
+    public String getRoleByUsername(String username)
+    {
         return userRepository.findByUsername(username)
-            .map(User::getRoles)
+            .map(UserEntity::getUserRole)
             .orElse(null);
     }
 
-    private record SessionInfo(String username, Instant authentificatedAt) {}
+    private record SessionInfo(String username, Instant authentificatedAt){}
 }

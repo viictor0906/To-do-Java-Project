@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Task</title>
+    <link rel="stylesheet" th:href="@{/styleAddTask.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1>Edit Task</h1>
+
+    <form th:action="@{'/templates/saveTask'}" method="post" th:object="${task}" class="form">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" th:field="*{title}" placeholder="Task title" required/>
+        </div>
+
+        <div class="form-group">
+            <label for="desc">Description</label>
+            <textarea th:field="*{desc}" placeholder="Describe the task" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="responsible">Responsible</label>
+            <input type="text" th:field="*{responsible}" placeholder="Responsible person" required/>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select th:field="*{status}">
+                <option th:each="status : ${status}" th:value="${status}" th:text="${status}">TO_DO</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="priority">Priority</label>
+            <select th:field="*{priority}">
+                <option th:each="priority : ${priorities}" th:value="${priority}" th:text="${priority}">LOW</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Categories</label>
+                <select th:field="*{categories}" id="categories">
+                <option th:each="category : ${listCategories}" th:value="${category.id}" th:text="${category.name}"></option>
+            </select>
+        </div>
+
+        <div class="action-center">
+            <button type="submit" class="btn">O Save Changes</button>
+            <a href="/templates/listTasks" class="btn btn-secondary">✕ Cancel</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

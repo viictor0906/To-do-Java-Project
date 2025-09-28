@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-do List</title>
+    <link rel="stylesheet" th:href="@{/styleListTask.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Tasks Registered</h1>
+        <div class="card mb-4">
+        <div class="card-header">
+            <h3>Filters</h3>
+        </div>
+        <div class="card-container">
+            <form th:action="@{/taskTemplate/listTasks}" method="get">
+                <div class="row">
+                    <div class="col-12">
+                        <label for="taskTitle" class="form-label">Title</label>
+                        <input type="taskTitle" class="form-control" name="taskTitle" id="taskTitle"
+                            th:value="${taskTitle}" placeholder="Search for title">
+
+                            <label for="taskPriority" class="form-label">Priority</label>
+                            <select type="field" class="form-control" name="taskPriority" id="taskPriority">
+                                <option value="">ALL</option>
+                                <option th:each="taskPriority : ${taskPriorityList}" th:value="${taskPriority}" th:text="${taskPriority}"
+                                    th:selected="${taskPriority == taskPriority}">
+                                </option>
+                            </select>
+
+                            <label for="taksStatus" class="form-label">Status</label>
+                            <select type="field" class="form-control" name="taksStatus" id="taksStatus">
+                                <option value="">ALL</option>
+                                <option th:each="taksStatus : ${taskStatusList}" th:value="${taksStatus}" th:text="${taksStatus}"
+                                    th:selected="${taksStatus == taskStatusList}">
+                                </option>
+                            </select>
+
+                            <label for="taskResponsible" class="form-label">Responsible</label>
+                            <input type="text" class="form-control" name="taskResponsible" id="taskResponsible"
+                                th:value="${taskResponsible}" th:text="${taskResponsible}" th:selected="${taskResponsible == taskStatusList}">
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i>Search
+                        </button>
+
+
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-danger">
+                            <i class="bi bi-x-circle"></i>Erase
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+        <ul class="task-list">
+            <li th:each="taskView: ${listTasks}" class="task-card">
+                <h2 th:text="${taskView.title}">Task Title</h2>
+                <p><strong>Description:</strong> <span th:text="${taskView.taskDescription}">Description</span></p>
+                <p><strong>Responsible:</strong> <span th:text="${taskView.taskResponsible}">Responsible</span></p>
+                <p><strong>Created:</strong> <span th:text="${taskView.taskCreationDate}">Date</span></p>
+                <p><strong>Status:</strong> <span th:text="${taskView.taskStatus}">Status</span></p>
+                <p><strong>Priority:</strong> <span th:text="${taskView.taskPriority}">Priority</span></p>
+                <p><strong>Category:</strong> <span th:each="categoryView: ${taskView.taskCategories}" th:text="${categoryView.categoryTitle}"></span></p>
+
+                <div class="task-actions">
+                    <a th:href="@{'/templates/' + ${task.id} + '/edit'}" class="btn btn-secondary">O Edit</a>
+                    <form th:action="@{'/templates/' + ${task.id} + '/delete'}" method="post" class="delete-form">
+                        <button type="submit" class="btn btn-danger">X Delete</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+        <div class="action-center">
+            <a href="/taskTemplate/addTask" class="btn btn-primary">+ New Task</a>
+            <a href="/categoryTemplate/listCategories" class="btn btn-primary">= Categories</a>
+        </div>
+    </div>
+<scriptsrc="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

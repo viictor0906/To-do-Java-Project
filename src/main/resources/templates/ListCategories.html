@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories</title>
+    <link rel="stylesheet" th:href="@{/styleListCategory.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Categories Registered</h1>
+
+        <ul class="task-list">
+            <li th:each="categoriesList : ${categoriesList}" class="task-card">
+                <div class="category-header">
+                    <h2 th:text="${categoryEntity.categoryTitle}">Category Name</h2>
+                    <div class="button-group">
+                        <a th:href="@{'/templatesCategory/editCategory/' + ${categoryEntity.categoryId}}" class="btn btn-secondary">Edit</a>
+
+                        <form th:action="@{'/templatesCategory/' + ${categoryEntity.categoryId} + '/deleteCategory'}" method="post" class="delete-form">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <div class="action-center">
+            <a href="/templatesCategory/addCategory" class="btn btn-primary">+ New Category</a>
+            <a href="/templatesTask/listTasks" class="btn btn-secondary">X Cancel</a>
+        </div>
+    </div>
+</body>
+</html>

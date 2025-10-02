@@ -26,7 +26,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-@RequestMapping("/taskTemplate")
+@RequestMapping("/templates")
 public class TaskViewController
 {
     private final CategoryRepository categoryRepository;
@@ -44,8 +44,8 @@ public class TaskViewController
     }
 
 
-    @GetMapping("/listTasks")
-    String listTasks
+    @GetMapping("/ListTasks")
+    String ListTasks
     (
         Model model,
         @RequestParam(required = false) String taskTitle,
@@ -95,28 +95,28 @@ public class TaskViewController
             .toList();
         }
 
-        model.addAttribute("listTasks", allTasks);
-        model.addAttribute("priorities", TaskEnumPriority.values());
-        model.addAttribute("statusList", TaskEnumStatus.values());
-        return "listTasks";
+        model.addAttribute("ListTasks", allTasks);
+        model.addAttribute("taskPriorityList", TaskEnumPriority.values());
+        model.addAttribute("taskStatusList", TaskEnumStatus.values());
+        return "ListTasks";
     }
 
 
-    @GetMapping("/addTask")
+    @GetMapping("/newTask")
     String newTask(Model model)
     {
         model.addAttribute("addTask", new TaskEntity());
-        model.addAttribute("priorities", TaskEnumPriority.values());
-        model.addAttribute("statusList", TaskEnumStatus.values());
+        model.addAttribute("taskPriorityList", TaskEnumPriority.values());
+        model.addAttribute("taskStatusList", TaskEnumStatus.values());
         model.addAttribute("listCategories", categoryRepository.findAll());
-        return "addTask";
+        return "NewTask";
     }
 
 
     @PostMapping("/saveTask")
     String saveTask
     (
-        @Valid @ModelAttribute("Task") TaskEntity submittedTask, 
+        @Valid @ModelAttribute("taskEntity") TaskEntity submittedTask, 
         BindingResult bindResult, 
         Model model, 
         RedirectAttributes redirectAttribute
@@ -124,7 +124,7 @@ public class TaskViewController
     
     {
         taskRepository.save(submittedTask);
-        return "redirect:/templates/listTasks";
+        return "redirect:/templates/ListTasks";
     }
 
 
@@ -132,17 +132,17 @@ public class TaskViewController
     String delete(@PathVariable Long taskId)
     {
         taskRepository.deleteById(taskId);
-        return "redirect:/templates/listTasks";
+        return "redirect:/templates/ListTasks";
     }
 
 
-    @GetMapping("/{id}/edit")
+    @GetMapping("/{id}/editTask")
     String edit(@PathVariable Long taskId, Model model)
     {
         var foundTask = taskRepository.findById(taskId).orElse(null);
         if(foundTask == null)
         {
-            return "redirect:/templates/listTasks";
+            return "redirect:/templates/ListTasks";
         }
 
         model.addAttribute("task", foundTask);
@@ -182,11 +182,11 @@ public class TaskViewController
 
         if(foundTask.isEmpty() || foundCategory.isEmpty())
         {
-            return "redirect:/templates/listTasks";
+            return "redirect:/templates/ListTasks";
         }
         
         foundTask.get().getTaskCategories().add(foundCategory.get());
         taskRepository.save(foundTask.get());
-        return "redirect:/templates/listTasks";
+        return "redirect:/templates/ListTasks";
     }
 }

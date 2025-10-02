@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage categories</title>
+</head>
+<body>
+    <h1>Associate categories to tasks</h1>
+    <span th:text="${task.title}"></span>
+    <span th:text="${task.id}"></span>
+    <div>
+        <p th:each="category : ${categories}">
+            <span th:text="${category.name}"></span>
+            <span th:text="${category.id}"></span>
+        </p>
+    </div>
+</body>
+</html>

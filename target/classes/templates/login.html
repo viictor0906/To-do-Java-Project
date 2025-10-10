@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .login-box { max-width: 420px; margin: 80px auto; padding: 24px; border: 1px solid #ddd; border-radius: 8px; background: #fff; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; }
+        input { width: 100%; padding: 8px; }
+        .btn { padding: 10px 16px; background: #0d6efd; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        .error { color: #b30000; margin-bottom: 12px; }
+    </style>
+    <!-- Página simples de login. Em ambiente real, use HTTPS e secure cookies. -->
+    <meta name="robots" content="noindex,nofollow">
+</head>
+<body>
+<div class="login-box">
+    <h2>Acesso</h2>
+    <div th:if="${erro}" class="error" th:text="${erro}"></div>
+    <form th:action="@{/login}" method="post">
+        <input type="hidden" name="redirect" th:value="${redirect}">
+        <div class="form-group">
+            <label for="username">Usuário</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn">Entrar</button>
+        <p style="margin-top:10px;color:#666">Usuário demo: <b>admin</b> / Senha: <b>123456</b></p>
+        <p style="margin-top:6px">Não tem conta? <a href="/register">Cadastre-se</a></p>
+    </form>
+</div>
+</body>
+<script>
+// Apenas usabilidade: envia ao apertar Enter
+document.getElementById('password').addEventListener('keyup', function(e){ if (e.key === 'Enter') { this.form.submit(); }});
+</script>
+</html>
+
+

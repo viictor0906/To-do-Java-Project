@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Tarefa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="display-5 text-primary" th:text="${tarefa.id != null ? '✏️ Editar Tarefa' : '➕ Nova Tarefa'}">Nova Tarefa</h1>
+                    <a th:href="@{/templates}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                </div>
+
+                <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <span th:text="${erro}">Erro</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <form th:action="@{/templates}" th:object="${tarefa}" method="post" novalidate>
+                            <input type="hidden" th:field="*{id}"/>
+
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="titulo" class="form-label">
+                                        <i class="bi bi-pencil"></i> Título *
+                                    </label>
+                                    <input type="text" class="form-control" id="titulo" th:field="*{titulo}" 
+                                           th:classappend="${#fields.hasErrors('titulo')} ? 'is-invalid' : ''"
+                                           placeholder="Ex.: Limpar a casa, Estudar para prova"/>
+                                    <div th:if="${#fields.hasErrors('titulo')}" class="invalid-feedback" th:errors="*{titulo}"></div>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="descricao" class="form-label">
+                                        <i class="bi bi-card-text"></i> Descrição
+                                    </label>
+                                    <textarea class="form-control" id="descricao" th:field="*{descricao}" 
+                                              rows="3" placeholder="Detalhes da tarefa (opcional)"></textarea>
+                                    <div th:if="${#fields.hasErrors('descricao')}" class="invalid-feedback" th:errors="*{descricao}"></div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="responsavel" class="form-label">
+                                        <i class="bi bi-person"></i> Responsável *
+                                    </label>
+                                    <!-- Se ADMIN, mostra select com usuários; senão, input readonly já preenchido -->
+                                    <select class="form-select" id="responsavel" th:field="*{responsavel}" th:if="${usuarios != null}">
+                                        <option th:each="u : ${usuarios}" th:value="${u}" th:text="${u}"></option>
+                                    </select>
+                                    <input type="text" class="form-control" id="responsavel" th:field="*{responsavel}" 
+                                           th:if="${usuarios == null}"
+                                           readonly
+                                           th:classappend="${#fields.hasErrors('responsavel')} ? 'is-invalid' : ''"/>
+                                    <div th:if="${#fields.hasErrors('responsavel')}" class="invalid-feedback" th:errors="*{responsavel}"></div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="prioridade" class="form-label">
+                                        <i class="bi bi-lightning"></i> Prioridade *
+                                    </label>
+                                    <select class="form-select" id="prioridade" th:field="*{prioridade}" 
+                                            th:classappend="${#fields.hasErrors('prioridade')} ? 'is-invalid' : ''">
+                                        <option value="">Selecione a prioridade</option>
+                                        <option th:each="p : ${prioridades}" th:value="${p}" th:text="${p}"></option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('prioridade')}" class="invalid-feedback" th:errors="*{prioridade}"></div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="status" class="form-label">
+                                        <i class="bi bi-flag"></i> Status *
+                                    </label>
+                                    <select class="form-select" id="status" th:field="*{status}" 
+                                            th:classappend="${#fields.hasErrors('status')} ? 'is-invalid' : ''">
+                                        <option value="">Selecione o status</option>
+                                        <option th:each="s : ${statusList}" th:value="${s}" th:text="${s}"></option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('status')}" class="invalid-feedback" th:errors="*{status}"></div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="dataLimite" class="form-label">
+                                        <i class="bi bi-calendar"></i> Data Limite
+                                    </label>
+                                    <input type="date" class="form-control" id="dataLimite" th:field="*{dataLimite}"
+                                           th:classappend="${#fields.hasErrors('dataLimite')} ? 'is-invalid' : ''"/>
+                                    <div th:if="${#fields.hasErrors('dataLimite')}" class="invalid-feedback" th:errors="*{dataLimite}"></div>
+                                    <small class="form-text text-muted">Deixe em branco se não houver prazo</small>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                <a th:href="@{/templates}" class="btn btn-outline-secondary me-md-2">
+                                    <i class="bi bi-x-circle"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Salvar Tarefa
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+</body>
+</html>

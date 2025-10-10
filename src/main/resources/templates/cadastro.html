@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuário</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .box { max-width: 480px; margin: 60px auto; padding: 24px; border: 1px solid #ddd; border-radius: 8px; background: #fff; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; }
+        input { width: 100%; padding: 8px; }
+        .btn { padding: 10px 16px; background: #198754; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        .error { color: #b30000; margin-bottom: 12px; }
+        .ok { color: #0a7b21; margin-bottom: 12px; }
+        a { color: #0d6efd; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>Criar conta</h2>
+    <div th:if="${erro}" class="error" th:text="${erro}"></div>
+    <div th:if="${sucesso}" class="ok" th:text="${sucesso}"></div>
+    <form th:action="@{/register}" method="post">
+        <div class="form-group">
+            <label for="username">Usuário</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">Confirmar senha</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+        </div>
+        <button type="submit" class="btn">Cadastrar</button>
+    </form>
+    <p style="margin-top:10px">Já tem conta? <a href="/login">Entrar</a></p>
+    <p style="margin-top:6px;color:#666">Usuário demo sempre disponível: <b>admin</b> / <b>123456</b></p>
+    
+</div>
+</body>
+</html>
+
+

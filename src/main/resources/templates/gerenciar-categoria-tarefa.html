@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Categorias da Tarefa</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>🏷️ Gerenciar Categorias da Tarefa</h1>
+
+        <div class="nav-links">
+            <a th:href="@{/templates}" class="btn">← Voltar para Tarefas</a>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+            <h3 style="margin: 0 0 10px 0; color: #2c3e50;">
+                📋 Tarefa: <span th:text="${tarefa.titulo}">Título da Tarefa</span>
+            </h3>
+            <p th:if="${tarefa.descricao}" style="margin: 0; color: #666;">
+                <span th:text="${tarefa.descricao}">Descrição da tarefa</span>
+            </p>
+        </div>
+
+        <form th:action="@{'/tarefas/' + ${tarefa.id} + '/categorias'}" method="post">
+            <h3 style="color: #2c3e50; margin-bottom: 20px;">📝 Selecione as Categorias:</h3>
+            
+            <div class="checkbox-group">
+                <div th:each="c : ${todasCategorias}" class="checkbox-item">
+                    <label>
+                        <input type="checkbox" name="categoriaIds"
+                               th:value="${c.id}"
+                               th:checked="${selecionadas.contains(c.id)}"/>
+                        <span th:text="${c.nome}">Categoria</span>
+                    </label>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(todasCategorias)}" style="text-align: center; padding: 20px; color: #666;">
+                <p>Nenhuma categoria disponível.</p>
+                <a th:href="@{/categorias}" class="btn btn-success">Criar Primeira Categoria</a>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button type="submit" class="btn btn-success" style="padding: 12px 24px; font-size: 16px;">
+                    💾 Salvar Categorias
+                </button>
+                <a th:href="@{/tarefas}" class="btn" style="margin-left: 10px;">❌ Cancelar</a>
+            </div>
+        </form>
+
+        <div th:if="${!#lists.isEmpty(tarefa.categorias)}" style="margin-top: 30px;">
+            <h3 style="color: #2c3e50; margin-bottom: 15px;">🏷️ Categorias Atuais:</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <span th:each="cat : ${tarefa.categorias}" 
+                      class="categoria-tag"
+                      th:text="${cat.nome}">Categoria</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

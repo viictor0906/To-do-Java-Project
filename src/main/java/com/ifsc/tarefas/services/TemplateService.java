@@ -38,40 +38,48 @@ public class TemplateService {
 
   @GetMapping
   String listar(Model model, 
-                @RequestParam(required = false) String titulo,
-                @RequestParam(required = false) String responsavel,
-                @RequestParam(required = false) Status status,
-                @RequestParam(required = false) Prioridade prioridade,
-                jakarta.servlet.http.HttpServletRequest request) {
-    
+    @RequestParam(required = false) String titulo,
+    @RequestParam(required = false) String responsavel,
+    @RequestParam(required = false) Status status,
+    @RequestParam(required = false) Prioridade prioridade,
+    @RequestParam(required = false) String taskColor,
+    jakarta.servlet.http.HttpServletRequest request) 
+{
     var user = RequestAuth.getUser(request);
     var role = RequestAuth.getRole(request);
     var tarefas = "ADMIN".equals(role) ? repo.findAll() : repo.findByResponsavel(user);
-    
+
     if (titulo != null && !titulo.trim().isEmpty()) {
       tarefas = tarefas.stream()
           .filter(t -> t.getTitulo().toLowerCase().contains(titulo.toLowerCase()))
           .collect(Collectors.toList());
     }
-    
+
     if (responsavel != null && !responsavel.trim().isEmpty()) {
       tarefas = tarefas.stream()
           .filter(t -> t.getResponsavel().toLowerCase().contains(responsavel.toLowerCase()))
           .collect(Collectors.toList());
     }
-    
+
     if (status != null) {
       tarefas = tarefas.stream()
           .filter(t -> t.getStatus() == status)
           .collect(Collectors.toList());
     }
-    
+
     if (prioridade != null) {
       tarefas = tarefas.stream()
           .filter(t -> t.getPrioridade() == prioridade)
           .collect(Collectors.toList());
     }
-    
+
+    if (taskColor != null && !taskColor.trim().isEmpty()) {
+      String corFiltro = taskColor.trim().toLowerCase();
+      tarefas = tarefas.stream()
+          .filter(t -> t.getTaskColor() != null && t.getTaskColor().toLowerCase().equals(corFiltro))
+          .collect(Collectors.toList());
+    }
+
     model.addAttribute("tarefas", tarefas);
     model.addAttribute("totalTarefas", tarefas.size());
     model.addAttribute("titulo", titulo);
@@ -80,8 +88,9 @@ public class TemplateService {
     model.addAttribute("prioridade", prioridade);
     model.addAttribute("statusList", Status.values());
     model.addAttribute("prioridades", Prioridade.values());
+    model.addAttribute("taskColor", taskColor);
     return "lista";
-  }
+}
 
   @GetMapping("/nova")
   String nova(Model model, jakarta.servlet.http.HttpServletRequest request) {
@@ -96,10 +105,12 @@ public class TemplateService {
     model.addAttribute("prioridades", Prioridade.values());
     model.addAttribute("statusList", Status.values());
     model.addAttribute("categorias", categoriaRepo.findAll());
-    // Para ADMIN: lista de usuários para o select
-    if ("ADMIN".equals(role)) {
+    
+    if("ADMIN".equals(role)) 
+    {
       model.addAttribute("usuarios", authRepository.getAllUsernames());
     }
+
     return "formulario";
   }
 

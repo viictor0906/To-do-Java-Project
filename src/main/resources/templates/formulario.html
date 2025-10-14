@@ -98,6 +98,14 @@
                                     <div th:if="${#fields.hasErrors('dataLimite')}" class="invalid-feedback" th:errors="*{dataLimite}"></div>
                                     <small class="form-text text-muted">Deixe em branco se não houver prazo</small>
                                 </div>
+
+                                <div class = "col-md-6 mb-3">
+                                    <label for="taskColor" class="form-label">
+                                        <i class="bi bi-palette"></i> Color
+                                    </label>
+                                    <input type="color" class="form-control form-control-color" id="taskColorID"
+                                        th:field="*{taskColor}" title="Escolha uma cor para a tarefa"/>
+                                </div>
                             </div>
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">

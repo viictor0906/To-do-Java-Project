@@ -78,8 +78,13 @@
                                     th:selected="${p == prioridade}">MEDIA</option>
                         </select>
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <div class="d-grid gap-2 w-100">
+                    <div class="col-md-2">
+                        <label for="taskColor" class="form-label">Cor da Tarefa</label>
+                        <input type="color" class="form-control form-control-color" id="taskColor" name="taskColor"
+                            th:value="${taskColor != null ? taskColor : '#ffffff'}" title="Escolha uma cor">
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <div class="d-grid gap-2 d-md-flex">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-search"></i> Filtrar
                             </button>
@@ -109,10 +114,15 @@
                         </thead>
                         <tbody>
                             <tr th:each="t : ${tarefas}">
-                                <td class="px-3">
-                                    <div class="fw-bold" th:text="${t.titulo}">Título</div>
-                                    <div th:if="${t.descricao}" class="text-muted small">
-                                        <span th:text="${t.descricao}">Descrição</span>
+                                <td class="px-3 d-flex align-items-center gap-2">
+                                    <div class="color-circle"
+                                        th:style="'background-color: ' + ${t.taskColor != null ? t.taskColor : '#ffffff'}">
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold" th:text="${t.titulo}">Título</div>
+                                        <div th:if="${t.descricao}" class="text-muted small">
+                                            <span th:text="${t.descricao}">Descrição</span>
+                                        </div>
                                     </div>
                                 </td>
                                 <td>

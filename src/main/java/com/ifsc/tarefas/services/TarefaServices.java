@@ -1,7 +1,6 @@
 package com.ifsc.tarefas.services;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,36 +10,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ifsc.tarefas.model.Tarefa;
 import com.ifsc.tarefas.repository.TarefaRepository;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
-import com.ifsc.tarefas.repository.ArquivoRepository;
 import com.ifsc.tarefas.repository.CategoriaRepository;
 import com.ifsc.tarefas.auth.RequestAuth;
-import com.ifsc.tarefas.model.Arquivo;
 import com.ifsc.tarefas.model.Prioridade;
 import com.ifsc.tarefas.model.Status;
 
 @RestController
 @RequestMapping("/api/tarefas")
 public class TarefaServices {
-
-  private final ArquivoRepository arquivoRepository;
   private final TarefaRepository repo;
   private final CategoriaRepository categoriaRepo;
 
-  public TarefaServices(TarefaRepository repo, CategoriaRepository categoriaRepo, ArquivoRepository arquivoRepository) {
+  public TarefaServices(TarefaRepository repo, CategoriaRepository categoriaRepo) {
     this.repo = repo;
     this.categoriaRepo = categoriaRepo;
-    this.arquivoRepository = arquivoRepository;
   }
 
   @PostMapping
@@ -60,11 +51,10 @@ public class TarefaServices {
 
   @GetMapping("/{id}")
   public ResponseEntity<Tarefa> buscar(@PathVariable Long id, jakarta.servlet.http.HttpServletRequest request) {
-    String user = RequestAuth.getUser(request);
     String role = RequestAuth.getRole(request);
     return repo.findById(id)
         .map(ResponseEntity::ok)
-        .filter(resp -> "ADMIN".equals(role) || user.equals(resp.getBody().getResponsavel()))
+        .filter(resp -> "ADMIN".equals(role))
         .orElse(ResponseEntity.notFound().build());
   }
 
@@ -128,6 +118,15 @@ public class TarefaServices {
     return ResponseEntity.ok(repo.findByResponsavel(responsavel));
   }
 
+  @GetMapping("/por-cor/{taskColor}")
+  public ResponseEntity<List<Tarefa>> tarefasPorCor(@PathVariable String taskColor, jakarta.servlet.http.HttpServletRequest request)
+  {
+    String user = RequestAuth.getUser(request);
+    return ResponseEntity.ok(repo.findByResponsavelAndTaskColorIgnoreCase(user, taskColor));
+  }
+
+  
+
   @GetMapping("/vencidas")
   public ResponseEntity<List<Tarefa>> tarefasVencidas(jakarta.servlet.http.HttpServletRequest request) {
     String user = RequestAuth.getUser(request);
@@ -156,34 +155,5 @@ public class TarefaServices {
       repo.save(tarefa.get());
 
       return ResponseEntity.noContent().build();
-  }
-
-  @PostMapping("/uploadFile")
-  public ResponseEntity<String> handleUpload
-  (
-    @RequestParam("fileDescription") String fileDescription,
-    @RequestParam("objectFile") MultipartFile objectFile
-  )
-  {
-    if(objectFile.isEmpty())
-    {
-      return ResponseEntity.badRequest().body("File is empty");
-    }
-
-    Arquivo arquivo = new Arquivo();
-    String fileName = objectFile.getOriginalFilename();
-    long fileSize = objectFile.getSize();
-    var fileConcatenated = ("Got file " + fileName + " (" + fileSize + " bytes) with description: " + fileDescription);
-    String key = UUID.randomUUID().toString() + "_" + arquivo.getFileName();
-
-    arquivo.setFileName(fileName);
-    arquivo.setFileDescription(fileDescription);
-    arquivo.setFileSize(fileConcatenated);
-    arquivo.setFileConcatenated(null);
-    
-
-    arquivoRepository.save(arquivo);
-
-    return ResponseEntity.ok(fileConcatenated);
   }
 }

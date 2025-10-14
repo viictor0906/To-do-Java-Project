@@ -39,9 +39,11 @@ public class Tarefa {
     @FutureOrPresent(message = "A data limite deve ser hoje ou uma data futura")
     private LocalDate dataLimite;
 
-    // lado "dono" do relacionamento
+    private String taskColor;
+
     @ManyToMany
-    @JoinTable(
+    @JoinTable
+    (
         name = "tarefa_categoria",
         joinColumns = @JoinColumn(name = "tarefa_id"),
         inverseJoinColumns = @JoinColumn(name = "categoria_id")
@@ -103,6 +105,14 @@ public class Tarefa {
         this.categorias = categorias;
     }
 
+    public String getTaskColor()
+    {
+        return taskColor;
+    }
+    public void setTaskColor(String newTaskColor)
+    {
+        this.taskColor = newTaskColor;
+    }
     
     
     // Métodos helper para gerenciar associações bidirecionais
